@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Secrétariat Godwin // Renseignements</title>
+  <style>
+    :root {
+      --bg-main: #0c0e12;
+      --bg-card: #151821;
+      --border-color: #272d3d;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent-gold: #e0a96d;
+      --tag-bg: #1e2433;
+
+      /* Codes couleurs diplomatie */
+      --status-ally: #2ec4b6;       /* Très amical */
+      --status-friendly: #2a9d8f;   /* Amical */
+      --status-neutral: #64748b;    /* Neutre */
+      --status-warning: #f77f00;    /* Ennemi sous surveillance / calme */
+      --status-hostile: #e63946;    /* Hostile / Guerre */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .badge-godwin {
+      background-color: var(--accent-gold);
+      color: #111;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .notice {
+      margin-top: 10px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    /* Contrôles */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 260px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-bar:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent-gold);
+      color: #111;
+      border-color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    /* Grille */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .card:hover {
+      border-color: #3b445c;
+      transform: translateY(-2px);
+    }
+
+    .card.own-group {
+      border: 2px solid var(--accent-gold);
+      background: #181920;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      gap: 8px;
+    }
+
+    .group-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .group-type {
+      color: var(--accent-gold);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Badges de relation */
+    .rel-badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .rel-ally { background: rgba(46, 196, 182, 0.15); color: var(--status-ally); border: 1px solid var(--status-ally); }
+    .rel-friendly { background: rgba(42, 157, 143, 0.15); color: var(--status-friendly); border: 1px solid var(--status-friendly); }
+    .rel-neutral { background: rgba(100, 116, 139, 0.15); color: var(--status-neutral); border: 1px solid var(--status-neutral); }
+    .rel-warning { background: rgba(247, 127, 0, 0.15); color: var(--status-warning); border: 1px solid var(--status-warning); }
+
+    .tag-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--tag-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    ul {
+      list-style-type: none;
+      font-size: 0.9rem;
+    }
+
+    li {
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .role {
+      color: var(--text-muted);
+    }
+
+    .box-info {
+      background-color: var(--tag-bg);
+      border-left: 3px solid var(--accent-gold);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .box-info.neutral { border-left-color: var(--status-neutral); color: var(--text-muted); }
+    .box-info.warning { border-left-color: var(--status-warning); }
+    .box-info.ally { border-left-color: var(--status-ally); }
+    .box-info.friendly { border-left-color: var(--status-friendly); }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+
+    .summary-table th, .summary-table td {
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .summary-table th {
+      background: var(--tag-bg);
+      color: var(--accent-gold);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="top-bar">
+        <h1>Secrétariat // Registre Général</h1>
+        <span class="badge-godwin">Groupe : Godwin</span>
+      </div>
+      <p class="notice">Registre confidentiel interne Godwin. Renseignements collectés in-game.</p>
+    </header>
+
+    <div class="controls">
+      <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher faction, membre, business, relation...">
+      <button class="filter-btn active" data-filter="all">Tous</button>
+      <button class="filter-btn" data-filter="godwin">★ Notre Groupe</button>
+      <button class="filter-btn" data-filter="organisation">Organisations</button>
+      <button class="filter-btn" data-filter="mc">Motard Clubs</button>
+      <button class="filter-btn" data-filter="gang">Gangs</button>
+      <button class="filter-btn" data-filter="marche">Synthèse Marché</button>
+    </div>
+
+    <div class="grid" id="cardGrid">
+
+      <!-- CARTE GODWIN (NOTRE GROUPE) -->
+      <div class="card own-group" data-category="godwin organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">★ Godwin</div>
+            <div class="group-type">Organisation // Notre Groupe</div>
+          </div>
+          <span class="tag-badge" style="color: var(--accent-gold); border: 1px solid var(--accent-gold);">QG / Base</span>
+        </div>
+        <div>
+          <div class="section-title">Consignes Internes</div>
+          <div class="box-info">
+            Toutes les infos du secrétariat sont obtenues in-game. Aucune fuite, pas de balances.
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Objectifs / Contacts à récupérer</div>
+        </div>
+      </div>
+
+      <!-- SYNTHESE MARCHE -->
+      <div class="card" data-category="marche">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Synthèse des Marchés</div>
+            <div class="group-type">Filières & Tarifs Connus</div>
+          </div>
+        </div>
+        <div>
+          <table class="summary-table">
+            <tr><th>Activité</th><th>Filière / Contact</th></tr>
+            <tr><td>Cambu</td><td>Les Saints (6 500 $/u)</td></tr>
+            <tr><td>ATM</td><td>ABF (6 000 $/u | 5 500 $>50)</td></tr>
+            <tr><td>GoFast</td><td>Hayaté (min 25) / Cayo</td></tr>
+            <tr><td>Meth</td><td>CDG (vente sous peu via Fallen/ABF)</td></tr>
+            <tr><td>Disqueuse</td><td>Cayo (CBMC intéressé)</td></tr>
+            <tr><td>Champignons</td><td>AOD (100 €/u -> revente 200-300 €)</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="section-title">Estimations Braquages & Enchères</div>
+          <ul>
+            <li><strong>Yacht :</strong> 750k - 800k (1 nageur braqueur + négos plage)</li>
+            <li><strong>Humane :</strong> 800k | <strong>Train :</strong> 1.2M | <strong>Fleeca :</strong> 2M</li>
+            <li><strong>Pétoire :</strong> 200k | <strong>Reprise Enchère :</strong> ~2M</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ================= ORGANISATIONS ================= -->
+
+      <!-- Black Meridian -->
+      <div class="card" data-category="organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Black Meridian (BM)</div>
+            <div class="group-type">Organisation</div>
+          </div>
+          <span class="rel-badge rel-friendly">Amical</span>
+        </div>
+        <div class="box-info friendly">
+          <strong>Ligne diplomatique :</strong> Relation amicale établie.<br>
+          Réseau italien lié. Sous-traitent la revente d'objets via ABF (minimum 400 kg).
+        </div>
+      </div>
+
+      <!-- La Fondation -->
+      <div class="card" data-category="organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">La Fondation</div>
+            <div class="group-type">Organisation</div>
+          </div>
+          <span class="rel-badge rel-ally">Très Amical</span>
+        </div>
+        <div>
+          <div class="section-title">Données de Prix / Loot</div>
+          <ul>
+            <li>Plourd : 600k - 700k</li>
+            <li>Vintage : disponible</li>
+            <li>8x3 : disponible</li>
+            <li>Aucun achat en dessous de 500k.</li>
+          </ul>
+        </div>
+        <div class="box-info ally">
+          <strong>Diplomatie :</strong> Entente privilégiée / contact très solide.
+        </div>
+      </div>
+
+      <!-- Cartel Del Guerreiro -->
+      <div class="card" data-category="organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Cartel Del Guerreiro (CDG)</div>
+            <div class="group-type">Organisation</div>
+          </div>
+          <span class="rel-badge rel-friendly">Amical / Sympathique</span>
+        </div>
+        <div>
+          <div class="section-title">Hiérarchie</div>
+          <ul>
+            <li><em>Leader inconnu</em> — <span class="role">Lead</span></li>
+            <li>Diana — <span class="role">Secrétaire</span></li>
+            <li><em>Inconnu</em> — <span class="role">Secrétaire</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-title">Business & Territoire</div>
+          <ul>
+            <li><strong>Légal :</strong> Boîte <em>Vida Loca</em> (Dock), Vêtements <em>Dresscode</em> (Vespucci).</li>
+            <li><strong>Illégal :</strong> Meth, Casino, Combats illégaux.</li>
+            <li><strong>Secteur :</strong> Cortz, villa, abords de leurs commerces. Armés minimum Tec-9.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sunset-Boulevard-Society -->
+      <div class="card" data-category="organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Sunset-Boulevard-Society</div>
+            <div class="group-type">Organisation</div>
+          </div>
+          <span class="rel-badge rel-neutral">Contact à prendre</span>
+        </div>
+        <div>
+          <div class="section-title">Activités</div>
+          <ul>
+            <li>Cocktails Molotov et autres (sous conditions).</li>
+            <li>Opérations Fleeca.</li>
+          </ul>
+        </div>
+        <div class="box-info neutral">
+          Numéro inconnu : à récupérer via le réseau Hayaté.
+        </div>
+      </div>
+
+      <!-- Autres Organisations -->
+      <div class="card" data-category="organisation">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Autres Organisations</div>
+            <div class="group-type">Organisation // En attente</div>
+          </div>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Black South Family :</strong> Aucune donnée.</li>
+            <li><strong>Famille Basha :</strong> Aucune donnée.</li>
+            <li><strong>Syndicat Belluci :</strong> Aucune donnée.</li>
+            <li><strong>Requiem :</strong> Aucune donnée.</li>
+            <li><strong>La Luna Negra :</strong> Aucune donnée.</li>
+            <li><strong>Donets'ki :</strong> Aucune donnée.</li>
+            <li><strong>SRD :</strong> Aucune donnée.</li>
+            <li><strong>Young Boys :</strong> Aucune donnée.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ================= MOTARD CLUBS ================= -->
+
+      <!-- Hayaté -->
+      <div class="card" data-category="mc">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Hayaté</div>
+            <div class="group-type">Motard Club</div>
+          </div>
+          <span class="rel-badge rel-friendly">Amical</span>
+        </div>
+        <div>
+          <div class="section-title">Membres</div>
+          <ul>
+            <li>John — <span class="role">Secrétaire</span></li>
+            <li>Elio — <span class="role">Gradé</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-title">Business & Accords</div>
+          <ul>
+            <li><strong>Go Fast :</strong> Min. 25 (dérogatoire sur 1ère commande). Délais indéfinis.</li>
+          </ul>
+        </div>
+        <div class="box-info friendly">
+          <strong>Territoire :</strong> Little Seoul | Marina.<br>
+          <strong>Consigne :</strong> Appel au secrétaire après coup si tirs sur leur secteur.
+        </div>
+      </div>
+
+      <!-- Angel Of Death -->
+      <div class="card" data-category="mc">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Angel Of Death (AOD)</div>
+            <div class="group-type">Motard Club</div>
+          </div>
+          <span class="rel-badge rel-neutral">Neutre</span>
+        </div>
+        <div>
+          <div class="section-title">Roster</div>
+          <ul>
+            <li>Walton — <span class="role">Lead</span> | Wayde — <span class="role">VP</span></li>
+            <li>Buck — <span class="role">Sergent d'armes</span> | Richard — <span class="role">Trésorier</span></li>
+            <li>Ryan Cassidy — <span class="role">Non gradé</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-title">Deals & Échanges</div>
+          <ul>
+            <li>Champignons : 100 €/u (revente 200-300 € via rue / Pulseon).</li>
+            <li>Ont partagé le contact clé ATM.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- The Fallen -->
+      <div class="card" data-category="mc">
+        <div class="card-header">
+          <div>
+            <div class="group-title">The Fallen</div>
+            <div class="group-type">Motard Club</div>
+          </div>
+          <span class="tag-badge">Réseau Meth</span>
+        </div>
+        <div>
+          <p style="font-size: 0.9rem;">Prévus pour écouler la meth produite avec l'Afro Block Family (ABF).</p>
+        </div>
+      </div>
+
+      <!-- Autres MC -->
+      <div class="card" data-category="mc">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Autres Motard Clubs</div>
+            <div class="group-type">Motard Club // En attente</div>
+          </div>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Black Dawg :</strong> Aucune donnée.</li>
+            <li><strong>Los Malditos :</strong> Aucune donnée.</li>
+            <li><strong>Calavera Bendita (CBMC) :</strong> ~3 sem., Mexicains, Casse aéroport, recherchent disqueuses.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ================= GANGS ================= -->
+
+      <!-- Les Saints -->
+      <div class="card" data-category="gang">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Les Saints</div>
+            <div class="group-type">Gang</div>
+          </div>
+          <span class="rel-badge rel-warning">Ennemi (Statut Calme)</span>
+        </div>
+        <div>
+          <div class="section-title">Consignes Internes Godwin</div>
+          <div class="box-info warning">
+            <strong>Ligne de conduite :</strong> Faction ennemie, mais aucun conflit actif pour l'instant. Restons calmes, pas de provocation inutile.
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Profil & Activité</div>
+          <p style="font-size: 0.9rem;">~1 mois en ville. Opportunistes d'argent. Gèrent le <strong>Cambu (6 500 $/u)</strong></p>
+        </div>
+      </div>
+
+      <!-- Black-White -->
+      <div class="card" data-category="gang">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Black-White</div>
+            <div class="group-type">Gang</div>
+          </div>
+          <span class="rel-badge rel-neutral">Neutre</span>
+        </div>
+        <div>
+          <p style="font-size: 0.9rem;">Aucun business recensé pour le moment. Relation neutre.</p>
+        </div>
+      </div>
+
+      <!-- Mara (Marabunta) -->
+      <div class="card" data-category="gang">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Mara (Marabunta)</div>
+            <div class="group-type">Gang</div>
+          </div>
+          <span class="rel-badge rel-neutral">Neutre / Bonne relation</span>
+        </div>
+        <div>
+          <div class="section-title">Membres</div>
+          <ul>
+            <li>Diego — <span class="role">Gradé</span> | <em>Recrue inconnue</em></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-title">Notes</div>
+          <p style="font-size: 0.9rem;">~19 jours en ville. Pas de business. Échange passé : contact Guerreiro contre 185th.</p>
+        </div>
+      </div>
+
+      <!-- Afro Block Family -->
+      <div class="card" data-category="gang">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Afro Block Family (ABF)</div>
+            <div class="group-type">Gang</div>
+          </div>
+          <span class="tag-badge">~3 mois en ville</span>
+        </div>
+        <div>
+          <div class="section-title">Roster</div>
+          <ul>
+            <li>Warner — <span class="role">Lead</span> | Franklin — <span class="role">Secrétaire</span></li>
+            <li>Devon & Jasir — <span class="role">Membres</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-title">Business</div>
+          <ul>
+            <li>ATM (6 000 $/u | 5 500 $>50).</li>
+            <li>Sous-traitant BM resell objets (min 400 kg). Meth à venir via Fallen.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Autres Gangs -->
+      <div class="card" data-category="gang">
+        <div class="card-header">
+          <div>
+            <div class="group-title">Autres Gangs Répertoriés</div>
+            <div class="group-type">Gang // En attente</div>
+          </div>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Sonaguera Boyz :</strong> En attente d'infos.</li>
+            <li><strong>Street Driver :</strong> En attente d'infos.</li>
+            <li><strong>The Rivals :</strong> En attente d'infos.</li>
+            <li><strong>Whitestone :</strong> En attente d'infos.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.card');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    let activeFilter = 'all';
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      filterCards(query, activeFilter);
+    });
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        activeFilter = button.getAttribute('data-filter');
+        filterCards(searchInput.value.toLowerCase().trim(), activeFilter);
+      });
+    });
+
+    function filterCards(search, filter) {
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const categories = card.getAttribute('data-category') || '';
+
+        const matchesSearch = text.includes(search);
+        const matchesCategory = (filter === 'all') || categories.split(' ').includes(filter);
+
+        if (matchesSearch && matchesCategory) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
